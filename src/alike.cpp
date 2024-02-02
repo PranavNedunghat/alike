@@ -1,22 +1,17 @@
-#pragma once
 
 #include <string>
 
 #include <torch/torch.h>
 #include <torch/script.h>
 #include <opencv2/opencv.hpp>
-
+#include <alike.hpp>
 #include <simple_padder.hpp>
 #include <soft_detect.hpp>
 #include <utils.h>
 
+using namespace alike;
 
-namespace alike
-{
-    class ALIKE
-    {
-    public:
-        ALIKE(std::string model_path,
+        ALIKE::ALIKE(std::string model_path,
               bool cuda = false,
               int radius = 2,
               int top_k = 500,
@@ -31,7 +26,7 @@ namespace alike
             mJitModel.eval();
         }
 
-        void extract(torch::Tensor &img_tensor,
+        void ALIKE::extract(torch::Tensor &img_tensor,
                      torch::Tensor &score_map,
                      torch::Tensor &descriptor_map)
         {
@@ -50,7 +45,7 @@ namespace alike
             descriptor_map = padder.unpad(descriptor_map);
         }
 
-        void detect(torch::Tensor &score_map,
+        void ALIKE::detect(torch::Tensor &score_map,
                     torch::Tensor &keypoints,
                     torch::Tensor &dispersitys,
                     torch::Tensor &kptscores)
@@ -65,7 +60,7 @@ namespace alike
             kptscores = kptscores.index({indices});
         }
 
-        void compute(torch::Tensor &descriptor_map,
+        void ALIKE::compute(torch::Tensor &descriptor_map,
                      torch::Tensor &keypoints,
                      torch::Tensor &descriptors)
         {
@@ -100,7 +95,7 @@ namespace alike
             descriptors = descs.t();
         }
 
-        void detectAndCompute(torch::Tensor &score_map,
+        void ALIKE::detectAndCompute(torch::Tensor &score_map,
                               torch::Tensor &descriptor_map,
                               torch::Tensor &keypoints,
                               torch::Tensor &dispersitys,
@@ -121,7 +116,7 @@ namespace alike
             keypoints = (keypoints + 1) / 2 * wh;
         }
 
-        void extactAndDetectAndCompute(torch::Tensor &img_tensor,
+        void ALIKE::extactAndDetectAndCompute(torch::Tensor &img_tensor,
                                        torch::Tensor &keypoints,
                                        torch::Tensor &dispersitys,
                                        torch::Tensor &kptscores,
@@ -133,7 +128,7 @@ namespace alike
             detectAndCompute(score_map, descriptor_map, keypoints, dispersitys, kptscores, descriptors);
         }
 
-        void toOpenCVFormat(torch::Tensor &keypoints_t,
+        void ALIKE::toOpenCVFormat(torch::Tensor &keypoints_t,
                             torch::Tensor &dispersitys_t,
                             torch::Tensor &kptscores_t,
                             torch::Tensor &descriptors_t,
@@ -156,11 +151,3 @@ namespace alike
             }
             descriptors = tensor2Mat(descriptors_t);
         }
-
-    private:
-        DKD mDkd;
-        bool mSubPixel;
-        torch::jit::script::Module mJitModel;
-        torch::Device mDevice;
-    };
-}

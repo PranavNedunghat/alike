@@ -8,7 +8,6 @@ set(CMAKE_BUILD_TYPE "Release")
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-list(APPEND CMAKE_PREFIX_PATH "/usr/local/libtorch")
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
@@ -16,7 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
 )
 find_package(CUDA REQUIRED)
 find_package(OpenMP)
-find_package(Torch REQUIRED)
+find_package(Torch REQUIRED PATHS /usr/local/libtorch)
 find_package(OpenCV REQUIRED)
 find_package(yaml-cpp REQUIRED)
 
@@ -132,7 +131,7 @@ set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -Wno-deprecated-gpu-targets")
 
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES get_patches get_patches_cuda 
+  LIBRARIES get_patches get_patches_cuda alike
   CATKIN_DEPENDS roscpp
   DEPENDS CUDA
 )
@@ -145,6 +144,10 @@ catkin_package(
 
   add_library(get_patches SHARED src/get_patches.cpp)
   target_link_libraries(get_patches get_patches_cuda)
+
+  add_library(alike SHARED src/alike.cpp src/utils.cpp ${PROJECT_SOURCE_DIR}/include)
+  target_link_libraries(alike get_patches get_patches_cuda)
+  target_include_directories(alike PUBLIC ${PROJECT_SOURCE_DIR}/include)
 # )
 
 ## Add cmake target dependencies of the library
@@ -185,7 +188,7 @@ catkin_package(
 #   scripts/my_python_script
 #   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 # )
-install(TARGETS get_patches get_patches_cuda
+install(TARGETS get_patches get_patches_cuda alike
         ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
@@ -236,4 +239,4 @@ install(TARGETS get_patches get_patches_cuda
 add_executable(demo 
                 src/main.cpp 
                 src/utils.cpp)
-target_link_libraries(demo ${TORCH_LIBRARIES} ${OpenCV_LIBS} ${catkin_LIBRARIES} get_patches yaml-cpp)
+target_link_libraries(demo ${TORCH_LIBRARIES} ${OpenCV_LIBS} ${catkin_LIBRARIES} get_patches yaml-cpp alike)

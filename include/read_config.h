@@ -5,7 +5,8 @@
 #include <iostream>
 #include <yaml-cpp/yaml.h>
 
-
+namespace alike
+{
 struct AlikeConfig {
   int max_keypoints{};
   bool use_cuda;
@@ -49,5 +50,5 @@ struct Configs{
     model_dir = alike_config.model_path + "/" + alike_config.model_name;
   }
 };
-
+}
 #endif  // READ_CONFIG_H_

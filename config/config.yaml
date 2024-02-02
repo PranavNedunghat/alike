@@ -2,7 +2,7 @@ alike:
         max_keypoints: 5000
         use_cuda: true
         top_k: -1
-        scores_threshold: 0.2
+        scores_threshold: 0.01
         ratio: 0.7
         max_image_size: -1
         no_display: false
