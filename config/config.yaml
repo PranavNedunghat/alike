@@ -1,0 +1,11 @@
+alike:
+        max_keypoints: 5000
+        use_cuda: true
+        top_k: -1
+        scores_threshold: 0.2
+        ratio: 0.7
+        max_image_size: -1
+        no_display: false
+        no_subpixel: true
+        model_path: /home/pranav/catkin_ws/src/alike/models
+        model_name: alike-l.pt
